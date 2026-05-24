@@ -31,7 +31,10 @@ yarn-error.*
 *.pem
 
 # local env files
-.env*.local
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # typescript
 *.tsbuildinfo
@@ -39,3 +42,19 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# --- Secrets & local env ---
+.env
+.env.*
+!.env.example
+
+# --- Personal / ops (adjust names) ---
+supabase/grant-premium-*.sql
+docs/
+
+# --- Cursor / IDE (optional) ---
+.cursor/
+*.log
+
+# --- OS ---
+Thumbs.db

@@ -87,8 +87,9 @@ export default function DataPrivacyScreen() {
       <SettingsSection title="Privacy">
         <Card>
           <ThemedText variant="body" className="text-sm leading-6">
-            Habits are linked to your signed-in account. Journal and progress history are saved in
-            the app until full cloud sync is available for those features.
+            Habits, journal entries, and progress history are saved on this device and synced to
+            your signed-in account when cloud sync is available. Your community posts appear
+            anonymous by default.
           </ThemedText>
         </Card>
       </SettingsSection>

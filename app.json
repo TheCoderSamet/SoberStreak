@@ -15,7 +15,6 @@
     },
     "android": {
       "package": "com.thecodersamet.soberstreak",
-      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#FAEEDA",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -43,6 +42,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "12f81abd-777b-487d-8665-d04ec6917bb7"
+      }
     }
   }
 }

@@ -9,9 +9,13 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "com.thecodersamet.soberstreak",
+      "buildNumber": "1",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.thecodersamet.soberstreak",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#FAEEDA",
         "foregroundImage": "./assets/android-icon-foreground.png",

@@ -1,5 +1,6 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
+import { syncAllUserData } from '../lib/dataSync';
 import { ensureLocalDataForAuthUser } from '../lib/localDataScope';
 import { setProfileSyncUserId } from '../lib/profileSyncScheduler';
 import { resetToLogin } from '../lib/navigationAuth';
@@ -44,6 +45,7 @@ async function bootstrapUserData(userId: string | undefined): Promise<void> {
   useAuthStore.setState({ profileBootstrapReady: false });
   try {
     await ensureLocalDataForAuthUser(userId);
+    await syncAllUserData(userId);
     await useSubscriptionStore.getState().fetchPremiumStatus(userId);
   } finally {
     useAuthStore.setState({ profileBootstrapReady: true });

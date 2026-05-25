@@ -7,6 +7,8 @@ import { PageHeader } from '../../components/PageHeader';
 import { PremiumLocked } from '../../components/PremiumLocked';
 import { SettingsSection } from '../../components/SettingsSection';
 import { FormError } from '../../components/FormError';
+import { softDeleteJournalEntryOnServer } from '../../lib/dataSync';
+import { scheduleProfileSync } from '../../lib/profileSyncScheduler';
 import { themedBox, themedIconWrap } from '../../lib/themeStyles';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -139,6 +141,7 @@ export default function JournalScreen() {
       triggers: triggers.length > 0 ? triggers : undefined,
       createdAt: nowIso,
     });
+    scheduleProfileSync();
     setMood(null);
     setNote('');
     setTriggers([]);
@@ -150,7 +153,14 @@ export default function JournalScreen() {
   const handleDelete = (entryId: string) => {
     Alert.alert('Delete entry?', 'This removes the entry from your device.', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteEntry(entryId) },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          deleteEntry(entryId);
+          void softDeleteJournalEntryOnServer(entryId);
+        },
+      },
     ]);
   };
 

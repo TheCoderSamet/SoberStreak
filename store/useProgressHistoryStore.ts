@@ -7,6 +7,9 @@ interface ProgressHistoryStore {
   history: ProgressHistoryItem[];
   addHistoryItem: (item: ProgressHistoryItem) => void;
   deleteHistoryItem: (id: string) => void;
+  replaceHistoryItemId: (oldId: string, newId: string) => void;
+  remapHabitId: (oldHabitId: string, newHabitId: string) => void;
+  setHistory: (history: ProgressHistoryItem[]) => void;
   clearHistory: () => void;
 }
 
@@ -20,6 +23,19 @@ export const useProgressHistoryStore = create<ProgressHistoryStore>()(
         set((state) => ({
           history: state.history.filter((entry) => entry.id !== id),
         })),
+      replaceHistoryItemId: (oldId, newId) =>
+        set((state) => ({
+          history: state.history.map((entry) =>
+            entry.id === oldId ? { ...entry, id: newId } : entry
+          ),
+        })),
+      remapHabitId: (oldHabitId, newHabitId) =>
+        set((state) => ({
+          history: state.history.map((entry) =>
+            entry.habitId === oldHabitId ? { ...entry, habitId: newHabitId } : entry
+          ),
+        })),
+      setHistory: (history) => set({ history }),
       clearHistory: () => set({ history: [] }),
     }),
     {

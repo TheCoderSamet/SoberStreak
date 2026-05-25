@@ -18,6 +18,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { ScreenContainer } from '../../components/ui/ScreenContainer';
 import { ThemedText } from '../../components/ui/ThemedText';
+import { syncAllUserData } from '../../lib/dataSync';
 import { statusPillStyle, themedIconWrap } from '../../lib/themeStyles';
 import { getDisplayNameFromUser } from '../../lib/authUser';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -25,6 +26,7 @@ import {
   getPremiumStatusLabel,
   useSubscriptionStore,
 } from '../../store/useSubscriptionStore';
+import { useSyncStore } from '../../store/useSyncStore';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useUserStore } from '../../store/useUserStore';
 
@@ -39,6 +41,15 @@ function HubCard({ children, className = '' }: { children: ReactNode; className?
   return <Card className={className}>{children}</Card>;
 }
 
+function formatLastSynced(iso: string | undefined): string {
+  if (!iso) return 'Not synced yet';
+  try {
+    return new Date(iso).toLocaleString();
+  } catch {
+    return 'Unknown';
+  }
+}
+
 export default function SettingsScreen() {
   const router = useRouter();
   const { colors, isDark } = useAppTheme();
@@ -49,6 +60,9 @@ export default function SettingsScreen() {
   const premiumSource = useSubscriptionStore((s) => s.source);
   const fetchPremiumStatus = useSubscriptionStore((s) => s.fetchPremiumStatus);
   const premiumStatusLabel = useSubscriptionStore(getPremiumStatusLabel);
+  const syncing = useSyncStore((s) => s.syncing);
+  const lastSyncedAt = useSyncStore((s) => s.lastSyncedAt);
+  const lastSyncError = useSyncStore((s) => s.lastError);
   const themeMode = useThemeStore((s) => s.mode);
 
   const displayName = user ? getDisplayNameFromUser(user) : null;
@@ -187,6 +201,34 @@ export default function SettingsScreen() {
         </HubCard>
       </SettingsSection>
 
+      <SettingsSection title="Cloud sync">
+        <HubCard>
+          <ThemedText className="text-base font-semibold">Backup sync</ThemedText>
+          <ThemedText variant="muted" className="mt-1 text-sm leading-5">
+            Habits, journal entries, and progress history sync to your account when online.
+          </ThemedText>
+          <ThemedText variant="muted" className="mt-3 text-sm">
+            Last synced: {formatLastSynced(lastSyncedAt)}
+          </ThemedText>
+          {lastSyncError ? (
+            <ThemedText variant="danger" className="mt-2 text-sm leading-5">
+              {lastSyncError}
+            </ThemedText>
+          ) : null}
+          <View className="mt-4">
+            <Button
+              title={syncing ? 'Syncing…' : 'Sync now'}
+              variant="secondary"
+              disabled={!user || syncing}
+              onPress={() => {
+                if (!user) return;
+                void syncAllUserData(user.id);
+              }}
+            />
+          </View>
+        </HubCard>
+      </SettingsSection>
+
       <SettingsSection title="Progress & support">
         <HubCard>
           <SettingRow
@@ -236,7 +278,7 @@ export default function SettingsScreen() {
           Sober Streak
         </ThemedText>
         <ThemedText variant="muted" className="mt-1 text-xs">
-          Version 0.1.0
+          Version 1.0.0
         </ThemedText>
       </View>
     </ScreenContainer>

@@ -1,6 +1,8 @@
 import { isAllHabitsView } from './habitScope';
 import { getAllHabits } from './habitUtils';
 import { supabase } from './supabase';
+import { useJournalStore } from '../store/useJournalStore';
+import { useProgressHistoryStore } from '../store/useProgressHistoryStore';
 import { useUserStore } from '../store/useUserStore';
 import type { Habit, HabitType, UserProfile } from '../types';
 import { hasFinishedOnboarding } from './onboardingState';
@@ -22,11 +24,11 @@ type HabitRow = {
   created_at: string;
 };
 
-function isUuid(id: string): boolean {
+export function isUuid(id: string): boolean {
   return UUID_RE.test(id);
 }
 
-function newHabitUuid(): string {
+export function newSyncUuid(): string {
   if (typeof globalThis.crypto?.randomUUID === 'function') {
     return globalThis.crypto.randomUUID();
   }
@@ -76,7 +78,7 @@ function habitToRow(habit: Habit, userId: string, isPrimary: boolean, isActive: 
     : new Date().toISOString();
 
   return {
-    id: isUuid(habit.id) ? habit.id : newHabitUuid(),
+    id: isUuid(habit.id) ? habit.id : newSyncUuid(),
     user_id: userId,
     type: habit.type,
     name: habit.name,
@@ -115,6 +117,8 @@ export async function upsertHabitOnServer(
 
   if (row.id !== habit.id) {
     useUserStore.getState().remapHabitId(habit.id, row.id);
+    useJournalStore.getState().remapHabitId(habit.id, row.id);
+    useProgressHistoryStore.getState().remapHabitId(habit.id, row.id);
     return { ...habit, id: row.id };
   }
 

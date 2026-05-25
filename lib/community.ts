@@ -18,11 +18,10 @@ type PostRow = {
   message: string;
   is_anonymous: boolean;
   created_at: string;
-  user_id: string;
   community_supports: { count: number }[] | null;
 };
 
-function mapPostRow(row: PostRow, userId: string | undefined, supportedPostIds: Set<string>): CommunityPost {
+function mapPostRow(row: PostRow, supportedPostIds: Set<string>): CommunityPost {
   const count = row.community_supports?.[0]?.count ?? 0;
   return {
     id: row.id,
@@ -32,7 +31,7 @@ function mapPostRow(row: PostRow, userId: string | undefined, supportedPostIds: 
     createdAt: row.created_at,
     supportCount: count,
     supportedByMe: supportedPostIds.has(row.id),
-    isMine: Boolean(userId && row.user_id === userId),
+    isMine: false,
   };
 }
 
@@ -58,7 +57,6 @@ export async function fetchCommunityFeed(userId: string | undefined): Promise<{
         message,
         is_anonymous,
         created_at,
-        user_id,
         community_supports ( count )
       `
       )
@@ -84,7 +82,7 @@ export async function fetchCommunityFeed(userId: string | undefined): Promise<{
   );
 
   const posts = (postsResult.data as PostRow[] | null ?? []).map((row) =>
-    mapPostRow(row, userId, supportedPostIds)
+    mapPostRow(row, supportedPostIds)
   );
 
   return { posts };

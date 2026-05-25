@@ -1,4 +1,4 @@
-import { syncAfterProfileChange } from './habitSync';
+import { syncAllUserData } from './dataSync';
 
 let activeUserId: string | undefined;
 
@@ -8,5 +8,5 @@ export function setProfileSyncUserId(userId: string | undefined): void {
 
 export function scheduleProfileSync(): void {
   if (!activeUserId) return;
-  void syncAfterProfileChange(activeUserId);
+  void syncAllUserData(activeUserId);
 }

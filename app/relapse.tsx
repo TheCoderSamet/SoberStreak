@@ -15,6 +15,7 @@ import { ThemedText } from '../components/ui/ThemedText';
 import { useAppTheme } from '../hooks/useAppTheme';
 import { useActiveHabit } from '../hooks/useActiveHabit';
 import { calculateSavings, getElapsedDays, quitDateFromPickerDate } from '../lib/dateMath';
+import { scheduleProfileSync } from '../lib/profileSyncScheduler';
 import { themedBox } from '../lib/themeStyles';
 import { validateQuitDate } from '../lib/validation';
 import { useProgressHistoryStore } from '../store/useProgressHistoryStore';
@@ -118,6 +119,7 @@ export default function RelapseScreen() {
     }
 
     updateHabit(habit.id, { quitDate: quitDateIso });
+    scheduleProfileSync();
 
     Alert.alert(
       'Your new start date is saved.',
